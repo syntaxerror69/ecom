@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+ <div class="container mt-5">
+    <div class="row">
+      {% for n in productData %}
+
+        <div class="col-3">
+            <div class="card" style="width:250px" title="{{n.name}}">
+                <img src="{{n.image.url}}" class='w-100 rounded' style="height:200px;" alt="">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between ">
+                        <h2 class="h4 text-truncate">{{n.name}} </h2>
+                        <h5 class="h6">{{n.category}}</h5>
+                    </div>
+
+                    <div class="d-flex justify-content-around">
+                        <h5 class="h6">Rs.<span class="text-danger">{{n.discount_price}}</span>/-</h5>
+
+                        <h6 class="h6"> <strike>Rs-{{n.price}}</strike>/-</h6>
+                    </div>
+                    <a href="{% url 'viewProduct' n.slug %}" class="btn btn-success">Buy</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <h2>Not Found Any Product</h2>
+        <p>Please Try Again.</p>
+      {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

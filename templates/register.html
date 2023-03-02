@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container">
+   <div class="row">
+    <div class="col-4 mx-auto  border shadow mt-5 rounded">
+        <h2 class="mt-2 p-2"> Registration Form </h2>
+        <form action="{% url 'register' %}" method="post" class="p-3" >
+            {% csrf_token %}
+            {{ form }}
+       
+        <input type="submit" class="btn btn-success mb-2 p-2 mx-auto w-100">
+        <p class="mx-auto">Already have an account? <a href="{% url 'login'%}"><span class="text-primary">Sign in</span></a></p>
+       <h6 style="text-align: center;">OR</h6>
+       <input type="submit" class="btn btn-primary mb-2 p-2 w-100 text-white" value="SIGN IN WITH GOOGLE">
+    </form>
+    </div>
+   
+   </div>
+</div>
+
+
+
+{% endblock  %}
