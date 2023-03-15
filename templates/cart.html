@@ -2,45 +2,86 @@
 
 {% block content %}
 
-<div class="container mt-4">
-    <div class="col-12">
-        <div class="row mb-4">
-            <div class="col-4">
-                <img src="{{ product.image.url}} "  class='w-100 rounded shadow-lg'alt="w-100">
-            </div>
-            <div class="col-8">
-                <table class="table">
-                    <tr>
-                        <th>Name</th>
-                        <td>{{product.name}}</td>
-                    </tr>
-                    <tr>
-                        <th>Category</th>
-                        <td>{{product.category}}</td>
-                    </tr>
-                    <tr>
-                        <th>Brand</th>
-                        <td>{{product.brand}}</td>
-                    </tr>
-                </table>
 
-                {% if product.discount_price %}
-                <h1>₹{{ product.discount_price}} <del class="h4 text-muted">₹{{ product.price}}</del></h1>
-                {% else %}
-                <h1>₹{{product.price}}</h1>
-                {% endif %}
-                <div class="d-flex gap-2">
-                 {% comment %} <a href="" class="btn btn-success btn-lg">Add to Cart</a> {% endcomment %}
-                 <a href="" class="btn btn-warning btn-lg">Buy Now</a>
+
+<div class="container">
+    <div class="row">
+        <h2 class="h2">My cart</h2>
+    </div>
+    <div class="row">
+        <div class="col-9 ṣ">
+           {% for order_item in order.items.all %}
+           <div class="card mb-3 p-2">
+            <div class="row">
+                <div class="col-1">
+                    <img src="{{ order_item.item.image.url }}" class="w-100" style="height: 70px; object-fit: contain;" alt="">
+                </div>
+                <div class="col-10">
+                    <h2 class="h6">{{ order_item.item.name}}</h2>
+                    <div class="d-flex">
+                        <p class="text-small mb-1 text-muted ">Category: {{ order_item.item.category.title}}</p>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2">
+                        {% if order_item.item.discount_price %}
+                        <h4>Rs. {{ order_item.get_discount_price}}
+                           <del class="h6 text-muted">Rs{{ order_item.get_price}}</del>
+                        </h4>
+                        <span class="text-success fw-bold">Saving: {{ order_item.item.getSavingPercent}}%</span>
+                        {% else %}
+                        <h4>Rs{{order_item.item.price }}</h4>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex align-items-baseline gap-1">
+                        <a href="{% url 'removeCart' order_item.item.slug %}" class="btn btn-danger ">-</a>
+                        <span class="h6">{{ order_item.qty}}</span>
+                        <a href="{% url 'addCart' order_item.item.slug %}" class="btn btn-success ">+</a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="card border border-success p-0">
-                <div class="card-header">Description</div>
-                <div class="card-body">
-                    <p>{{product.description}}</p>
-                </div>
+           {% endfor %}
+        </div>
+        <div class="col-3">
+            <table class="table">
+             <tr>
+                <th>Total Amount</th>
+                <td>₹ {{ order.get_total_amount}}</td>
+             </tr>
+             <tr>
+                <th>Total Tax</th>
+                <td>₹ {{ order.get_tax_amount}}</td>
+             </tr>
+             <tr class="bg-success text-white" >
+                <th >Total Discount</th>
+                <td>₹ {{ order.get_discount_amount }}</td>
+             </tr>
+             {% if order.coupon %}
+             <tr class="bg-warning text-black">
+                <th> Coupon Discount 
+                    <div>Code: {{ order.coupon.code}} <a href="{% url 'removeCoupon'%}" class="text-danger-small">Remove</a></div>
+                </th>
+             </tr>
+             <tr>
+                <th> Total Payable</th>
+                <td>₹ {{ order.get_payable_amount}}</td>
+             </tr>
+             {% endif %}
+            </table>
+
+            {% if not order.coupon %}
+            <div class="d-flex mt-5 bg-warning p-2 justify-content-center">
+                <form action="{% url 'addCoupon'%}" method="post" class="d-flex">
+                    {% csrf_token %}
+                    <input type="text" placeholder="Enter Code" class="form-control" name="code">
+                    <input type="submit" value="Go" class="btn btn-danger">
+                </form>
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-2 flex-column mt-5 ">
+                <a href="" class="btn btn-danger">Go Back</a>
+                <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
             </div>
         </div>
     </div>
